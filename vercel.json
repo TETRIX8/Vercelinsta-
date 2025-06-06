@@ -3,17 +3,42 @@
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.11",
+        "includeFiles": ["src/**", "requirements.txt"]
+      }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.py"
+      "dest": "/api/index.py",
+      "methods": ["GET", "POST", "OPTIONS"]
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.py"
+      "src": "/set-webhook",
+      "dest": "/api/index.py",
+      "methods": ["GET"]
+    },
+    {
+      "src": "/health",
+      "dest": "/api/index.py",
+      "methods": ["GET"]
+    },
+    {
+      "src": "/",
+      "dest": "/api/index.py",
+      "methods": ["GET"]
     }
-  ]
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "/var/task/src:/var/task"
+  }
 }
